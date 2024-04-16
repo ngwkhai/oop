@@ -11,6 +11,7 @@
  ******************************************************************************/
 package oop.HW2;
 import java.awt.Color;
+import oop.Picture;
 
 public class Fade {
 

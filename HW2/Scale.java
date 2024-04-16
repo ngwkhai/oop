@@ -12,6 +12,7 @@
  ******************************************************************************/
 package oop.HW2;
 import java.awt.Color;
+import oop.Picture;
 
 public class Scale {
     public static void main(String[] args) {

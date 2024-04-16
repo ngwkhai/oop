@@ -5,7 +5,7 @@
  *  Dependencies: none
  *
  ******************************************************************************/
-package oop.HW2;
+package oop;
 import java.awt.Color;
 import java.awt.FileDialog;
 import java.awt.Toolkit;
