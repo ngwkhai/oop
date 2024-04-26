@@ -71,6 +71,12 @@ public class Luminance {
         return gray;
     }
 
+    public static Color toBlue(Color color) {
+        int b = color.getBlue();
+        Color blue = new Color(0, 0, b);
+        return blue;
+    }
+
     /**
      * Are the two given colors compatible? Two colors are compatible if
      * the difference in their monochrome luminances is at least 128.0).
