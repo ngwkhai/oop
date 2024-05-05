@@ -1,5 +1,6 @@
 package oop.Expression;
 
-abstract public class Expression {
-    abstract public int evaluate();
+interface Expression {
+    int evaluate();
+    String toString();
 }

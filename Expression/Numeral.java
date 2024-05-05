@@ -1,14 +1,16 @@
 package oop.Expression;
 
-public class Numeral extends Expression{
+public class Numeral implements Expression {
     private int value;
-    public Numeral(int value) {
+    public Numeral (int value) {
         this.value = value;
     }
-    public int evaluate() {
-        return value;
+    @Override
+    public int evaluate(){
+        return this.value;
     }
-    public String toString() {
-        return "" + value;
+    @Override
+    public String toString(){
+        return value + "";
     }
 }

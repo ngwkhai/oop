@@ -1,7 +1,6 @@
 package oop.Expression;
 
-abstract public class BinaryExpression extends Expression{
-    public Expression left;
-    public Expression right;
-
+interface BinaryExpression extends Expression {
+    Expression left();
+    Expression right();
 }
