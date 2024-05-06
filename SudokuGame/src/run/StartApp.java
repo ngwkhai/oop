@@ -7,6 +7,6 @@ import models.SudokuModel;
 public class StartApp {
     public static void main(String[] args) {
         SudokuModel model = new SudokuModel();
-        Controller controller = new SudokuController(model);
+        //Controller controller = new SudokuController(model);
     }
 }
