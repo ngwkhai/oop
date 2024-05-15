@@ -1,8 +1,7 @@
 package views;
 
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.Random;
 
 import javax.swing.*;
@@ -13,17 +12,17 @@ import javax.swing.plaf.DimensionUIResource;
 import canvas.BoardGraphics;
 
 import controller.Controller;
+import models.SudokuGenerator;
 import models.SudokuModel;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class SudokuGame extends JFrame implements ActionListener {
 	JButton[][] board = new JButton[9][9];
 	JButton[][] boardResult = new JButton[3][3];
 	int[][] state = new int[9][9];
 	int[][] stateSolve = new int[9][9];
-	int numberCellIllegal = 0;
+	int old_x = -1;
+	int old_y = -1;
+
 	JButton jbNew, jbSolved, jbReset;
 	JButton lbMessage;
 	JComboBox<String> comboBox;
@@ -35,9 +34,7 @@ public class SudokuGame extends JFrame implements ActionListener {
 	ColorUIResource colorMain = new ColorUIResource(0, 128, 255);
 	Color colorButton = new Color(0, 128, 255);
 	Color colorOpacity = new Color(93, 174, 255);
-	ColorUIResource colorCell = new ColorUIResource(178, 231, 250);
-	ColorUIResource colorText = new ColorUIResource(255, 51, 51);
-	Color colorSolved = new Color(255, 221, 221);
+
 
 	public SudokuGame(Controller controller, SudokuModel model) {
 		this.controller = controller;
@@ -65,6 +62,7 @@ public class SudokuGame extends JFrame implements ActionListener {
 		controlPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		controlPanel.setBackground(Color.white);
 		boardPanel.setBorder(new LineBorder(colorMain, 5));
+		//boardPanel.setEnabled(true);
 		container.add(boardPanel, BorderLayout.CENTER);
 		container.add(controlPanel, BorderLayout.EAST);
 
@@ -75,10 +73,13 @@ public class SudokuGame extends JFrame implements ActionListener {
 				board[i][j] = new JButton();
 				board[i][j].addActionListener(this);
 				board[i][j].setActionCommand(i + " " + j);
+
+				board[i][j].setEnabled(true);
 				
 				board[i][j].setBorder(new LineBorder(colorMain, 1));
 				board[i][j].setFont(new Font("Arial", Font.BOLD, 25));
-				board[i][j].setForeground(colorText);
+				board[i][j].setForeground(Color.RED);
+				board[i][j].setBackground(Color.white);
 
 				boardPanel.add(board[i][j]);
 
@@ -152,11 +153,14 @@ public class SudokuGame extends JFrame implements ActionListener {
 
 				boardResult[i][j] = new JButton(i * 3 + j + 1 + "");
 				boardResult[i][j].addActionListener(this);
-				boardResult[i][j].setActionCommand(i + " " + j);
+				boardResult[i][j].setActionCommand(i + " " + j + " ");
+				boardResult[i][j].setEnabled(true);
 
 				boardResult[i][j].setBorder(new LineBorder(colorMain, 1));
 				boardResult[i][j].setFont(new Font("Arial", Font.PLAIN, 18));
 				boardResult[i][j].setForeground(Color.black);
+				setUI(boardResult[i][j]);
+				setHover(boardResult[i][j]);
 
 				boardRes.add(boardResult[i][j]);
 
@@ -220,33 +224,6 @@ public class SudokuGame extends JFrame implements ActionListener {
 
 	}
 
-	/*public void checkWin() {
-		boolean win = true;
-		for (int i = 0; i < 9; i++) {
-			for (int j = 0; j < 9; j++) {
-				if (board[i][j].isEditable()) {
-					String inputUser = board[i][j].getText();
-					if (!inputUser.equals(String.valueOf(stateSolve[i][j]))) {
-						win = false;
-						numberCellIllegal++;
-						board[i][j].setBackground(Color.red);
-						board[i][j].setForeground(Color.yellow);
-					} else {
-						board[i][j].setBackground(Color.white);
-						board[i][j].setForeground(Color.black);
-					}
-				}
-			}
-		}
-		if (win == true) {
-			JOptionPane.showMessageDialog(this, "Chúc mừng bạn đã giải thành công");
-			lbMessage.setText("Winer !!!\n Tạo trò chơi mới");
-		}else {
-			lbMessage.setText(numberCellIllegal+" ô không hợp lệ");
-		}
-		numberCellIllegal=0;
-	}*/
-
 	public void display(int board[][]) {
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
@@ -264,56 +241,15 @@ public class SudokuGame extends JFrame implements ActionListener {
 			for (int j = 0; j < 9; j++) {
 				board[i][j].setText("");
 				state[i][j] = 0;
+				stateSolve[i][j] = 0;
 				board[i][j].setBackground(Color.white);
 				//board[i][j].setEditable(true);
-				board[i][j].setForeground(colorText);
+				board[i][j].setForeground(Color.black);
 			}
 		}
 	}
 
-	/*public boolean isNumeric(String strNum) {
-		try {
-			int d = Integer.parseInt(strNum);
-			if (!(d > 0 && d <= 9)) {
-				return false;
-			}
-		} catch (NumberFormatException nfe) {
-			return false;
-		}
-		return true;
-	}
-
-	public void handleExceptionInput() {
-		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < board.length; j++) {
-				int i1 = i;
-				int i2 = j;
-				board[i][j].getDocument().addDocumentListener(new DocumentListener() {
-					@Override
-					public void removeUpdate(DocumentEvent e) {
-						board[i1][i2].setBackground(Color.white);
-						board[i1][i2].setForeground(Color.red);
-
-					}
-
-					@Override
-					public void insertUpdate(DocumentEvent e) {
-						board[i1][i2].setBackground(Color.white);
-						board[i1][i2].setForeground(Color.red);
-
-					}
-
-					@Override
-					public void changedUpdate(DocumentEvent e) {
-						board[i1][i2].setBackground(Color.white);
-						board[i1][i2].setForeground(Color.red);
-					}
-				});
-			}
-		}
-	}
-
-	public boolean isEmtry() {
+	public boolean isEmtry(int[][] state) {
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
 				if (!(state[i][j] == 0)) {
@@ -323,17 +259,17 @@ public class SudokuGame extends JFrame implements ActionListener {
 			}
 		}
 		return true;
-	}*/
+	}
 
 	public void showBoard() {
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
 				if (state[i][j] != 0) {
 					board[i][j].setText(String.valueOf(state[i][j]));
-					board[i][j].setEnabled(false);
+					//board[i][j].setEnabled(true);
 					//board[i][j].setEditable(false);
 					board[i][j].setBackground(Color.white);
-					board[i][j].setForeground(Color.red);
+					board[i][j].setForeground(Color.black);
 				}
 			}
 		}
@@ -348,32 +284,74 @@ public class SudokuGame extends JFrame implements ActionListener {
 		}
 		return result;
 	}
+	public void addNum(int i, int j, int k) {
+		if (state[i][j] == 0 || board[i][j].getForeground().equals(Color.red)) {
+			state[i][j] = k;
+			board[i][j].setText(String.valueOf(k));
+			if (stateSolve[i][j] == k) {
+				board[i][j].setForeground(Color.black);
+			} else {
+				board[i][j].setForeground(Color.red);
+			}
+		}
+	}
+
+	public void setPress(int k) {
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				board[i][j].setBackground(Color.white);
+			}
+		}
+		if (state[k][0] != 0) {
+			for (int i = 0; i < 9; i++) {
+				for (int j = 0; j < 9; j++) {
+					if (state[i][j] == k) {
+						board[i][j].setBackground(Color.gray);
+					}
+				}
+			}
+		}
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-//		if (e.getSource() == jbNew) {
-//			resetBoard();
-//			controller.makeNewGame();
-//			state = copyState(model.getGenome().getState());
-//			stateSolve = copyState(model.getGenome().getState());
-//			level();
-//			showBoard();
-//			display(state);
-//			if(model.isSuccess()) {
-//				lbMessage.setText("Creating successful!");
-//			} else {
-//				lbMessage.setText("Creating failed!");
-//			}
-//		}
-		/*if (e.getSource() == jbSolved) {
-			if (!isEmtry()) {
+		String command = e.getActionCommand();
+		if (e.getSource() == jbNew) {
+			resetBoard();
+			controller.makeNewGame();
+			state = copyState(model.getSudokuGenerator().getBoard());
+			stateSolve = copyState(model.getSudokuGenerator().getBoard());
+			level();
+			showBoard();
+			display(state);
+			lbMessage.setText("Creating successful!");
+		}
+		if (command.length() == 3) {
+			int i = Integer.parseInt(command.substring(0, 1));
+			int j = Integer.parseInt(command.substring(2, 3));
+			System.out.println(i + " " + j + " " + state[i][j]);
+			setPress(state[i][j]);
+			old_x = i;
+			old_y = j;
+		}
+		if (command.length() == 4) {
+			int i = Integer.parseInt(command.substring(0, 1));
+			int j = Integer.parseInt(command.substring(2, 3));
+			System.out.println(i + " " + j);
+			addNum(old_x, old_y, 3 * i + j + 1);
+		}
+		if (e.getSource() == jbSolved) {
+			if (!isEmtry(state)) {
+				SudokuGenerator sg = new SudokuGenerator();
+				if (isEmtry(stateSolve)) {
+					sg.copyBoard(state);
+					sg.generateBoard();
+					stateSolve = sg.getBoard();
+				}
 				for (int i = 0; i < 9; i++) {
 					for (int j = 0; j < 9; j++) {
-
-						if (board[i][j].isEditable()) {
+						if (!board[i][j].getForeground().equals(Color.red)) {
 							board[i][j].setText(String.valueOf(stateSolve[i][j]));
-							board[i][j].setBackground(colorSolved);
-							board[i][j].setForeground(Color.red);
 						}
 					}
 				}
@@ -382,10 +360,8 @@ public class SudokuGame extends JFrame implements ActionListener {
 
 			}
 		}
-		if (e.getSource() == jbCheck) {
-			checkWin();
-			handleExceptionInput();
-			System.out.println("hello");
-		}*/
+		if (e.getSource() == jbReset) {
+			resetBoard();
+		}
 	}
 }

@@ -1,19 +1,16 @@
 package models;
 
 public class SudokuModel {
-    //Population population;
+    SudokuGenerator sudokuGenerator;
     public SudokuModel() {
-    //    population = new Population();
+        sudokuGenerator = new SudokuGenerator();
     }
     public void makeNewGame() {
-    //    population.makeNewGame();
+        sudokuGenerator.makeNewGame();
     }
-    //public Genome getGenome() {
-    //    return population.getGenome();
-    //}
-    //public boolean isSuccess() {
-    //    return population.isMakeNewGameSuccess();
-    //}
+    public SudokuGenerator getSudokuGenerator() {
+        return sudokuGenerator;
+    }
     public static void main(String[] args) {
         SudokuModel s = new SudokuModel();
         s.makeNewGame();
