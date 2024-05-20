@@ -36,10 +36,12 @@ public class SudokuGenerator {
             }
             System.out.println();
         }
+        System.out.println();
     }
     public void makeNewGame() {
         creatBroad();
         generateBoard();
+        printBoard();
     }
 
     public void generateBoard() {

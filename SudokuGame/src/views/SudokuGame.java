@@ -260,6 +260,17 @@ public class SudokuGame extends JFrame implements ActionListener {
 		}
 		return true;
 	}
+	public boolean isFull(int[][] state) {
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				if ((state[i][j] == 0)) {
+					return false;
+				}
+
+			}
+		}
+		return true;
+	}
 
 	public void showBoard() {
 		for (int i = 0; i < 9; i++) {
@@ -319,6 +330,9 @@ public class SudokuGame extends JFrame implements ActionListener {
 		if (e.getSource() == jbNew) {
 			resetBoard();
 			controller.makeNewGame();
+			while (!isFull(model.getSudokuGenerator().getBoard())) {
+				controller.makeNewGame();
+			}
 			state = copyState(model.getSudokuGenerator().getBoard());
 			stateSolve = copyState(model.getSudokuGenerator().getBoard());
 			level();
@@ -342,11 +356,11 @@ public class SudokuGame extends JFrame implements ActionListener {
 		}
 		if (e.getSource() == jbSolved) {
 			if (!isEmtry(state)) {
-				SudokuGenerator sg = new SudokuGenerator();
 				if (isEmtry(stateSolve)) {
+					SudokuGenerator sg = new SudokuGenerator();
 					sg.copyBoard(state);
 					sg.generateBoard();
-					stateSolve = sg.getBoard();
+					stateSolve = copyState(sg.getBoard());
 				}
 				for (int i = 0; i < 9; i++) {
 					for (int j = 0; j < 9; j++) {
@@ -356,7 +370,7 @@ public class SudokuGame extends JFrame implements ActionListener {
 					}
 				}
 			} else {
-				JOptionPane.showMessageDialog(this, "Bạn phải tạo trò chơi mới");
+				JOptionPane.showMessageDialog(this, "You must create a new game!");
 
 			}
 		}
