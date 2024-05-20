@@ -23,6 +23,9 @@ public class SudokuGame extends JFrame implements ActionListener {
 	int old_x = -1;
 	int old_y = -1;
 
+	int numError = 0;
+	JLabel error = new JLabel("Error: " + numError + " / 5");
+
 	JButton jbNew, jbSolved, jbReset;
 	JButton lbMessage;
 	JComboBox<String> comboBox;
@@ -137,12 +140,19 @@ public class SudokuGame extends JFrame implements ActionListener {
 		lbTitle.setFont(new Font("Arial", Font.BOLD, 19));
 		lbTitle.setForeground(colorMain);
 
+		error.setForeground(colorMain);
+		error.setFont(new Font("Arial", Font.BOLD, 15));
+		error.setBackground(Color.white);
+		error.setSize(new DimensionUIResource(90, 20));
+
 		JPanel panelInfo = new JPanel();
 		panelInfo.add(lbTitle);
 		panelInfo.add(lbMessage);
+		panelInfo.add(error);
 		panelInfo.setBorder(new LineBorder(colorMain,2));
 		panelInfo.setLayout(new GridLayout(7, 1, 1, 1));
 		panelInfo.setBackground(Color.white);
+
 
 		JLayeredPane boardRes = new BoardGraphics(new GridLayout(3, 3, 1, 1));
 		boardRes.setBorder(new LineBorder(colorMain, 3));
@@ -303,7 +313,12 @@ public class SudokuGame extends JFrame implements ActionListener {
 				board[i][j].setForeground(Color.black);
 			} else {
 				board[i][j].setForeground(Color.red);
+				numError++;
 			}
+		}
+		if (numError == 5) {
+			JOptionPane.showMessageDialog(this, "You lose!");
+			System.exit(0);
 		}
 	}
 
@@ -324,6 +339,20 @@ public class SudokuGame extends JFrame implements ActionListener {
 		}
 	}
 
+	public void gameOver() {
+		boolean check = true;
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				if (state[i][j] == 0 || board[i][j].getForeground().equals(Color.red)) {
+					check = false;
+				}
+			}
+		}
+		if (check) {
+			JOptionPane.showMessageDialog(this, "You win!");
+		}
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
@@ -339,6 +368,7 @@ public class SudokuGame extends JFrame implements ActionListener {
 			showBoard();
 			display(state);
 			lbMessage.setText("Creating successful!");
+			numError = 0;
 		}
 		if (command.length() == 3) {
 			int i = Integer.parseInt(command.substring(0, 1));
@@ -353,6 +383,8 @@ public class SudokuGame extends JFrame implements ActionListener {
 			int j = Integer.parseInt(command.substring(2, 3));
 			System.out.println(i + " " + j);
 			addNum(old_x, old_y, 3 * i + j + 1);
+			error.setText("Error: " + numError + " / 5");
+			gameOver();
 		}
 		if (e.getSource() == jbSolved) {
 			if (!isEmtry(state)) {
